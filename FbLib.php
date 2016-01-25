@@ -7,30 +7,30 @@ use yii\base\Component;
 use yii\base\InvalidConfigException;
 
 /**
- * Работа с API facebook
+ * Component for working with facebook API
  */
 class FbLib extends Component{
     
     /**
-     * id facebook приложения
+     * id facebook application
      * @var string 
      */
     public $appId;
     
     /**
-     * secret facebook приложения
+     * secret facebook application
      * @var string 
      */
     public $appSecret;
     
     /**
-     * ссылка для возврата после редиректа в fb
+     * callback url
      * @var string 
      */
     public $redirectUri;
     
     /**
-     * получаем Oauth Code
+     * get Oauth Code
      * @return string
      */
     public function getOauthCode() {
@@ -43,7 +43,7 @@ class FbLib extends Component{
     }
     
     /**
-     * получаем Token
+     * get Token
      * @param string $code
      * @return string
      */
@@ -55,8 +55,7 @@ class FbLib extends Component{
                 . '&code=' . $code;
         $contents = $this->sendQuery($url);
         if (json_decode($contents)) {
-            //дописать обработку ошибок
-            print_r(json_decode($contents));
+            throw new \Exception(json_decode($contents)->error->message);
         } else {
             $patern = ['/access_token=/', '/&expires=.*$/'];
             return preg_replace($patern, ['', ''], $contents);
@@ -64,7 +63,7 @@ class FbLib extends Component{
     }
     
     /**
-     * получаем данные профиля
+     * get profile data
      * @param string $token
      * @return string
      */
@@ -79,7 +78,7 @@ class FbLib extends Component{
     }
     
     /**
-     * get запрос чтобы сто раз не повторять
+     * get request
      * @param string $url
      * @return string
      */
